@@ -14,9 +14,9 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    date = models.DateTimeField(default=timezone.now,
-            blank=False, null=False)
-    products = models.ManyToManyField(Product, through="ProductQuantity")
+    date = models.DateTimeField(default=timezone.now, blank=False, null=False)
+    # products = models.ManyToManyField(Product, through="ProductQuantity")
+    products = models.ManyToManyField(Product, related_name="orders")
 
     class Meta:
         ordering = ['date']
@@ -24,11 +24,11 @@ class Order(models.Model):
     def __str__(self):
         return str(self.date)
 
-
-class ProductQuantity(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f"Order {self.order.__str__()}: " \
-               f"{self.product.__str__()}"
+#
+# class ProductQuantity(models.Model):
+#     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+#     order = models.ForeignKey(Order, on_delete=models.CASCADE)
+#
+#     def __str__(self):
+#         return f"Order {self.order.__str__()}: " \
+#                f"{self.product.__str__()}"
