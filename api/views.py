@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from .serializer import ProductSerializer, OrderSerializer
 from .models import Product, Order
 from rest_framework import filters
+from rest_framework.views import APIView
 
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -22,19 +23,18 @@ class StatsViewSet(viewsets.ModelViewSet):
     pass
 
 
-# def snippet_list(request):
-#     """
-#     List all products, or create a new product.
-#     """
-#     if request.method == 'GET':
-#         snippets = Product.objects.all()
-#         serializer = ProductSerializer
-#         return JsonResponse(serializer.data, safe=False)
+# class ProductsListView(APIView):
+#     """Displaying all products in the store on JSON"""
+#     def get(self, request):
+#         queryset = Product.objects.all()
+#         if queryset:
+#             serializer_for_queryset = ProductSerializer(
+#                 instance=queryset,
+#                 many=True
+#             )
+#             return Response(serializer_for_queryset.data,
+#                             status=status.HTTP_200_OK)
+#         else:
+#             return Response(status=status.HTTP_204_NO_CONTENT)
 #
-#     elif request.method == 'POST':
-#         data = JSONParser().parse(request)
-#         serializer = SnippetSerializer(data=data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return JsonResponse(serializer.data, status=201)
-#         return JsonResponse(serializer.errors, status=400)
+#
