@@ -1,4 +1,5 @@
-from api.views import OrderViewSet, ProductViewSet, StatsViewSet
+from api.views import OrderViewSet, ProductViewSet, StatsViewSet, \
+    OrderDateViewSet
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
 
@@ -6,10 +7,12 @@ from django.urls import path, include
 router = DefaultRouter()
 router.register(r'api/products', ProductViewSet, basename='product')
 router.register(r'api/orders', OrderViewSet, basename='order')
-router.register(r'api/stats', StatsViewSet, basename='stats')
+router.register(r'api/date', OrderDateViewSet, basename='order_date')
+
 
 urlpatterns = [
     path(r'', include(router.urls)),
     path(r'api/', include('rest_framework.urls', namespace='rest_framework')),
-    # path('api-token-auth/', obtain_auth_token, name='api-token-auth')
+    path(r'api/stats/', StatsViewSet.as_view()),
+
 ]

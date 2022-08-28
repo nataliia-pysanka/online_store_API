@@ -3,6 +3,9 @@ from .models import Product, Order
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    title = serializers.StringRelatedField()
+    price = serializers.DecimalField(max_digits=19, decimal_places=2)
 
     class Meta:
         model = Product
@@ -10,6 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
     date = serializers.DateTimeField(format="%Y-%m-%d")
     products = ProductSerializer(many=True)
 
@@ -24,9 +28,12 @@ class OrderSerializer(serializers.ModelSerializer):
     def create_or_update_products(self, products):
         products_ids = []
         for product in products:
+            print('product ', product.values())
             product_instance, created = Product.objects.update_or_create(
                 pk=product.get('id'), defaults=product)
+            print(product_instance, created)
             products_ids.append(product_instance.pk)
+        print('products_ids: ', products_ids)
         return products_ids
 
     def create(self, validated_data):
@@ -62,3 +69,14 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ('id', 'date', 'products')
 
         extra_kwargs = {'products': {'required': False}}
+
+
+class OrderSearchSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(format="%Y %b")
+    products = ProductSerializer(many=True)
+
+    class Meta:
+        ordering = ['date']
+        model = Order
+        fields = ('date', 'products')
+

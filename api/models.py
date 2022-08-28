@@ -19,7 +19,7 @@ class Order(models.Model):
     products = models.ManyToManyField(Product, related_name="orders")
 
     class Meta:
-        ordering = ['id']
+        ordering = ['date']
 
     def __str__(self):
         return str(self.date)
