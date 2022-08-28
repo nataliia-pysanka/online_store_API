@@ -7,8 +7,6 @@ from django.urls import path, include
 router = DefaultRouter()
 router.register(r'api/products', ProductViewSet, basename='product')
 router.register(r'api/orders', OrderViewSet, basename='order')
-router.register(r'api/date', OrderDateViewSet, basename='order_date')
-
 
 urlpatterns = [
     path(r'', include(router.urls)),
