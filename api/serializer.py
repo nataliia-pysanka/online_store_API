@@ -3,6 +3,9 @@ from .models import Product, Order
 
 
 class ProductSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Product model data
+    """
     id = serializers.IntegerField()
     title = serializers.StringRelatedField()
     price = serializers.DecimalField(max_digits=19, decimal_places=2)
@@ -13,11 +16,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
+    """
+    Serializer for Order model data
+    """
     id = serializers.IntegerField()
     date = serializers.DateTimeField(format="%Y-%m-%d")
     products = ProductSerializer(many=True)
 
     def get_or_create_products(self, products):
+        """
+        Creates new Product instances or gets already existed and
+        returns list of them id's
+        """
         products_ids = []
         for product in products:
             product_instance, created = Product.objects.get_or_create(
@@ -26,6 +36,10 @@ class OrderSerializer(serializers.ModelSerializer):
         return products_ids
 
     def create_or_update_products(self, products):
+        """
+        Creates new Product instances or updates already existed and
+        return list of them id's
+        """
         products_ids = []
         for product in products:
             print('product ', product.values())
@@ -38,7 +52,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Create and return a new `Order` instance, given the validated data.
+        Creates and returns a new Order instance based on given validated data
         """
         products = validated_data.get('products', [])
         order = Order.objects.create(**validated_data)
@@ -47,12 +61,10 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """
-        Update and return an existing `Order` instance,
-        given the validated data.
+        Updates and returns an existing Order instance based on given
+        validated data
         """
         products = validated_data.get('products', [])
-        print('products:', products)
-        print('validated_data:', validated_data)
         instance.products.set(self.create_or_update_products(products))
         fields = ['date']
         for field in fields:
@@ -69,14 +81,3 @@ class OrderSerializer(serializers.ModelSerializer):
         fields = ('id', 'date', 'products')
 
         extra_kwargs = {'products': {'required': False}}
-
-
-class OrderSearchSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(format="%Y %b")
-    products = ProductSerializer(many=True)
-
-    class Meta:
-        ordering = ['date']
-        model = Order
-        fields = ('date', 'products')
-

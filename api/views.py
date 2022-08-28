@@ -1,19 +1,17 @@
-from rest_framework import routers, serializers, viewsets, status, views
-from rest_framework.response import Response
-from django.contrib.auth.models import User
-from .serializer import ProductSerializer, OrderSerializer, \
-    OrderSearchSerializer
+from rest_framework import viewsets, views
+from .serializer import ProductSerializer, OrderSerializer
 from .models import Product, Order
 from rest_framework import filters
-from rest_framework import generics
 from datetime import datetime
 from rest_framework.response import Response
 from django.db.models import Sum, Count
 from re import search as re_search, IGNORECASE
-from typing import List
 
 
 def get_date(str_date: str):
+    """
+    Parses the inputted string and returns datetime object
+    """
     date_formats = ['%Y-%m', '%Y/%m', '%Y%m',
                     '%Y-%b', '%Y/%b', '%Y%b',
                     '%Y-%B', '%Y/%B', '%Y%B',
@@ -34,6 +32,9 @@ def get_date(str_date: str):
 
 
 def get_next_month(date_: datetime):
+    """
+    Returns datetime object with increased on 1 month value
+    """
     year, month = date_.year, date_.month
     month += 1
     if month > 12:
@@ -44,11 +45,17 @@ def get_next_month(date_: datetime):
 
 
 class ProductViewSet(viewsets.ModelViewSet):
+    """
+    View for list of all Product
+    """
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
+    """
+    View for list of all Orders
+    """
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
     filter_backends = [filters.OrderingFilter]
@@ -56,20 +63,35 @@ class OrderViewSet(viewsets.ModelViewSet):
 
 
 class StatsViewSet(views.APIView):
+    """
+    View for list of statistic data
+    """
 
     def query_sum(self, obj: Order):
+        """
+        Returns aggregation function Sum for products of Order instance for
+        field 'price'
+        """
         month_value = obj.products.aggregate(Sum('price'))
         month_value = month_value.get('price__sum')
         month_value = 0 if month_value is None else month_value
         return month_value
     
     def query_count(self, obj: Order):
+        """
+        Returns aggregation function Count for products of Order instance for
+        field 'title'
+        """
         month_count = obj.products.aggregate(Count('title'))
         month_count = month_count.get('title__count')
         month_count = 0 if month_count is None else month_count
         return month_count
 
     def counter(self, agg_func, queryset: [Order]):
+        """
+        Returns dict with results of aggregation function calculations for
+        every month in list
+        """
         stat_dict = {}
         for obj in queryset:
             value = agg_func(obj)
@@ -83,8 +105,7 @@ class StatsViewSet(views.APIView):
 
     def get(self, request):
         """
-        This view should return a list of all the orders
-        for the specific time term.
+        Returns a list of all the orders for the specific time term
         """
         queryset = Order.objects.all()
         date_start = self.request.query_params.get('date_start', None)
@@ -124,15 +145,3 @@ class StatsViewSet(views.APIView):
             stat.append({'date': month, 'value': value})
 
         return Response(stat)
-
-
-class OrderDateViewSet(viewsets.ModelViewSet):
-    # queryset = Order.objects.all()
-    serializer_class = OrderSerializer
-
-    def get_queryset(self):
-        date_start = self.request.query_params.get('date', None)
-        date_start = get_date(date_start)
-        date_end = get_next_month(date_start)
-        queryset = Order.objects.filter(date__range=[date_start, date_end])
-        return queryset
