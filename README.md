@@ -21,7 +21,7 @@ Docker-compose (https://docs.docker.com/compose/)
 
 ```bash
 # Clone this repository using git
-git@github.com:nataliia-pysanka/online_store_API.git
+git clone git@github.com:nataliia-pysanka/online_store_API.git
 # Change dir
 sudo cd online_store_API
 # Build the container
@@ -36,6 +36,6 @@ make seed
 ### Destroy
 
 ```bash
-`make down`
+make down
 ```
 
