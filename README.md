@@ -19,19 +19,29 @@ Docker-compose (https://docs.docker.com/compose/)
 
 ### Deploy
 
-```bash
+
 # Clone this repository using git
+```bash
 git clone git@github.com:nataliia-pysanka/online_store_API.git
-# Change dir
-sudo cd online_store_API
-# Build the container
-make up
-# Make migrations
-make migrate
-# Populate database
-make seed
-# Navigate to http://localhost
 ```
+# Change dir
+```bash
+cd online_store_API
+```
+# Build the container
+```bash
+make up
+```
+# Make migrations
+```bash
+make migrate
+```
+# Populate database
+```bash
+make seed
+```
+# Navigate to (http://localhost)
+
 
 ### Destroy
 
