@@ -48,7 +48,7 @@ Populate database
 ```bash
 make seed
 ```
-Navigate to (http://localhost)
+Navigate to http://localhost
 It could be some problems with work in Safari. In that situation try Google Chrome/
 
 
