@@ -1,5 +1,5 @@
-from rest_framework import viewsets, views
-from .serializer import ProductSerializer, OrderSerializer
+from rest_framework import viewsets, mixins
+from .serializer import ProductSerializer, OrderSerializer, StatSerializer
 from .models import Product, Order
 from rest_framework import filters
 from datetime import datetime
@@ -62,10 +62,12 @@ class OrderViewSet(viewsets.ModelViewSet):
     ordering_fields = ['date']
 
 
-class StatsViewSet(views.APIView):
+class StatsViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     """
     View for list of statistic data
     """
+    queryset = Order.objects.all()
+    serializer_class = StatSerializer
 
     def query_sum(self, obj: Order):
         """
@@ -103,11 +105,10 @@ class StatsViewSet(views.APIView):
                 stat_dict.update({date: value})
         return stat_dict
 
-    def get(self, request):
+    def get_queryset(self):
         """
         Returns a list of all the orders for the specific time term
         """
-        queryset = Order.objects.all()
         date_start = self.request.query_params.get('date_start', None)
         date_end = self.request.query_params.get('date_end', None)
         metric = self.request.query_params.get('metric', 'price')
@@ -132,7 +133,7 @@ class StatsViewSet(views.APIView):
             metric = 'price'
 
         stat = []
-        queryset = queryset.filter(
+        queryset = self.queryset.filter(
             date__range=[date_start, date_end]).order_by('date')
         stat_dict = {}
         match metric:
@@ -143,5 +144,4 @@ class StatsViewSet(views.APIView):
 
         for month, value in stat_dict.items():
             stat.append({'date': month, 'value': value})
-
-        return Response(stat)
+        return stat

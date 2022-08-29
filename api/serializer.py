@@ -6,7 +6,6 @@ class ProductSerializer(serializers.ModelSerializer):
     """
     Serializer for Product model data
     """
-    id = serializers.IntegerField()
     title = serializers.StringRelatedField()
     price = serializers.DecimalField(max_digits=19, decimal_places=2)
 
@@ -19,7 +18,6 @@ class OrderSerializer(serializers.ModelSerializer):
     """
     Serializer for Order model data
     """
-    id = serializers.IntegerField()
     date = serializers.DateTimeField(format="%Y-%m-%d")
     products = ProductSerializer(many=True)
 
@@ -42,12 +40,9 @@ class OrderSerializer(serializers.ModelSerializer):
         """
         products_ids = []
         for product in products:
-            print('product ', product.values())
             product_instance, created = Product.objects.update_or_create(
                 pk=product.get('id'), defaults=product)
-            print(product_instance, created)
             products_ids.append(product_instance.pk)
-        print('products_ids: ', products_ids)
         return products_ids
 
     def create(self, validated_data):
@@ -56,6 +51,7 @@ class OrderSerializer(serializers.ModelSerializer):
         """
         products = validated_data.get('products', [])
         order = Order.objects.create(**validated_data)
+        print(**validated_data)
         order.products.set(self.get_or_create_products(products))
         return order
 
@@ -80,4 +76,10 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('id', 'date', 'products')
 
-        extra_kwargs = {'products': {'required': False}}
+
+class StatSerializer(serializers.Serializer):
+    """
+    Serializer for statistic data
+    """
+    date = serializers.DateTimeField(format="%Y %b")
+    value = serializers.DecimalField(max_digits=19, decimal_places=2)
