@@ -14,7 +14,8 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    date = models.DateTimeField(default=timezone.now, blank=False, null=False)
+    date = models.DateTimeField(default=timezone.now,
+                                blank=False, null=False)
     products = models.ManyToManyField(Product, related_name="orders")
 
     class Meta:
