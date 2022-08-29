@@ -36,6 +36,6 @@ make seed
 ### Destroy
 
 ```bash
-`make down`
+make down
 ```
 
