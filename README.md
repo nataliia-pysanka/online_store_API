@@ -32,6 +32,14 @@ Build the container
 ```bash
 make up
 ```
+Find container's name
+```bash
+sudo docker ps -a
+```
+Open container's bash
+```bash
+sudo docker exec -i -t <container_name> /bin/sh
+```
 Make migrations
 ```bash
 make migrate
