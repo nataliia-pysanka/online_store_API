@@ -15,6 +15,6 @@ clear:
 	sudo docker system prune -a
 
 migrate:
-	python manage.py migrate
+	python3 manage.py migrate
 seed:
-	python manage.py seed
+	python3 manage.py seed
