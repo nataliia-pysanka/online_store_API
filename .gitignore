@@ -9,7 +9,6 @@ exit
 __pycache__
 
 # Env
-.env
 myvenv/
 venv/
 menv/
