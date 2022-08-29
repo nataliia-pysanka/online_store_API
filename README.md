@@ -23,7 +23,7 @@ Docker-compose (https://docs.docker.com/compose/)
 # Clone this repository using git
 git clone git@github.com:nataliia-pysanka/online_store_API.git
 # Change dir
-sudo cd online_store_API
+cd online_store_API
 # Build the container
 make up
 # Make migrations
